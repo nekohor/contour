@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <!-- <meta name="description" content="一种基于网页的辊形设计器"> -->
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+
+  <link rel='icon' href='./assets/favicon.png'>
+  <link rel="stylesheet" href="./assets/style.css">
+
+  <!-- 载入脚本，不装逼  -->
+  <script src='./assets/js/d3.v4.min.js'></script>
+  <script src='./assets/js/data.js'></script>
+  <script src='./assets/js/main.js'></script>
+
+  <title>辊形设计器</title>
+</head>
+
+<body>
+  <h1>辊形设计器</h1>
+
+  <div id="container">
+    <!-- This will be the mounting point for d3's main chart -->
+    <div id="chart"></div>
+
+    <div class="row">
+      <h3>Choose a curve type <small>you can choose multiple</small></h3>
+      <!-- The curve type blocks and their settings will appear in this div -->
+      <div id="curvetypes"></div>
+    </div>
+
+    <div class="row">
+      <h3>Choose a dataset <small>or make your own</small></h3>
+      <!-- This will be the mounting point for the dataset selections and their visualization SVGs -->
+      <div id="datasets"></div>
+    </div>
+
+    <div class="row">
+      <h4>全局设置</h4>
+      <!-- Any (useful) global settings get put here -->
+      <div id="settings"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>王宇阳制作 (Copyright &copy; 2017)</p>
+  </footer>
+
+</body>
+
+</html>
