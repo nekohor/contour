@@ -2,7 +2,13 @@ var datasets = {};
 datasets.generated = [];
 datasets.curvetypes = [];
 
-var pi = Math.PI
+var pi = Math.PI;
+var square = function (x) {
+    return Math.pow(x, 2); // watch out the return!
+};
+var cube = function (x) {
+    return Math.pow(x, 3); // watch out the return!
+};
 
 /*
  * This is a factory function that returns objects that can be added
@@ -26,18 +32,70 @@ function generatedData(name, method, args) {
 
 
 /*
- * CVC曲线的数据集生成
+ * CVC曲线分析的数据集生成
  * 
  * 拥有的参数如下
- * @param  = how "tall" the sine curve is
- * @param period    = how "spread out" the cycles are
- * @param cycles    = how many times the sinusoid repeats
- * @param density   = the number of discrete points per cycle. Ideally around 24.
+ * @param length    = how "long" the work roll length is
+ * @param chock     = max roll shift chock
+ * @param a1        = parameter a1
+ * @param a2        = parameter a2
+ * @param a3        = parameter a3
+ * 
  */
 
-function generateCVC(p) {
+function generateCVCAnalysis(p) {
+    var data = d3.range(-p.length / 2, p.length / 2, 100);
+    var x = d3.scaleLinear().domain([-p.length / 2, p.length / 2]).range([-p.length / 2, p.length / 2]);
+    var y = d3.scaleLinear().domain([-1000, 1000]).range([0, 1500]);
 
+    var cvcTransform = function (index) {
+        var input = x(index);
+        var output = y((p.a1 * input + p.a2 * square(input) + p.a3 * Math.pow(input, 3)) / 1000);
+        return { x: input, y: output }
+    };
+    obj = [];
+
+    return data.map(cvcTransform)
 }
+
+var cvcAnalysis = generatedData("CVC辊形", generateCVCAnalysis, [
+    {
+        name: "length",
+        default: 1880,
+        scale: d3.scaleLinear().domain([0, 3000]).range([0, 3000]).clamp(true)
+
+    },
+    {
+        name: "chock",
+        default: 150,
+        scale: d3.scaleLinear().domain([0, 150]).range([0, 150]).clamp(true)
+
+    },
+    {
+        name: "a1",
+        default: 5.0299E-10,
+        scale: d3.scaleLinear().domain([-1, 1]).range([-1, 1]).clamp(true)
+
+    },
+    {
+        name: "a2",
+        default: -1.3618E-06,
+        scale: d3.scaleLinear().domain([-1, 1]).range([-1, 1]).clamp(true)
+
+    },
+    {
+        name: "a3",
+        default: 1.0225E-03,
+        scale: d3.scaleLinear().domain([-1, 1]).range([-1, 1]).clamp(true)
+
+    }
+])
+
+// 设定其曲线为默认曲线
+// cvcAnalysis.default = true;
+
+
+
 /*
  * A simple function that generates an array of {x, y} objects constrained to a
  * sine curve, according to certain input parameters.
@@ -90,6 +148,7 @@ var sin = generatedData("Sinusoidal Curve", generateSin, [
     }
 ])
 
+//设定其曲线为默认曲线
 sin.default = true;
 
 
@@ -340,7 +399,7 @@ datasets.curvetypes = [
 ]
 
 /* Generate an example dataset (for visualization) */
-var generators = [sin, rand, ring], defaults;
+var generators = [sin, rand, ring, cvcAnalysis], defaults;
 var getDefaults = function (args) {
     var obj = {};
     for (var i = 0; i < args.length; i++) {
@@ -352,8 +411,9 @@ var getDefaults = function (args) {
 for (var i = 0; i < generators.length; i++) {
     defaults = getDefaults(generators[i].args)
     generators[i].example = generators[i].method(defaults);
-
+    console.log(generators[i].example)
     /* Add all the dataset generators to the list */
+    // generators[i]指的是
     datasets.generated.push(generators[i])
 }
 
@@ -361,11 +421,13 @@ for (var i = 0; i < generators.length; i++) {
 datasets.settings = [
     {
         name: "Play animations", // Some people may find it annoying or slow, so allow them to turn it off
+        zh_name: "播放动画",
         type: "boolean",
         default: true
     },
     {
         name: "Show data points", // Maybe they just want a pretty curve?
+        zh_name: "显示数据点",
         type: "boolean",
         default: true
     }
